@@ -1,8 +1,20 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ['*'],
-  /* other config options here */
+  // Compression
+  compress: true,
+  // Image optimization
+  images: {
+    unoptimized: true, // Fast on Raspberry Pi
+  },
+  // Experimental optimizations
+  experimental: {
+    optimizePackageImports: ["lucide-react"],
+  },
+  // Production settings
+  productionBrowserSourceMaps: false,
+  poweredByHeader: false,
+  allowedDevOrigins: ["*"],
 };
 
 export default nextConfig;
