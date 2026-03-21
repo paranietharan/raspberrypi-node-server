@@ -16,6 +16,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Raspberry Pi Monitor",
   description: "Live system monitoring dashboard for Raspberry Pi",
+  icons: {
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/site-icon.png",
+  },
 };
 
 export default function RootLayout({
