@@ -44,7 +44,7 @@ export function PiMonitorDashboard() {
   const fetchData = useCallback(async () => {
     setIsRefreshing(true);
     try {
-      // Allow browser cache + server cache to reduce server load
+      // The server briefly caches samples; browsers must not retain system details
       const res = await fetch("/api/system");
       if (!res.ok) {
         throw new Error("Unable to fetch metrics");
@@ -61,13 +61,13 @@ export function PiMonitorDashboard() {
   }, []);
 
   useEffect(() => {
-    void fetchData();
-    // Align with server cache duration (1s) + allow browser cache
+    const initial = requestAnimationFrame(() => { void fetchData(); });
+    // Poll live samples every two seconds
     const timer = setInterval(() => {
       void fetchData();
     }, 2000);
 
-    return () => clearInterval(timer);
+    return () => { cancelAnimationFrame(initial); clearInterval(timer); };
   }, [fetchData]);
 
   const memoryPercent = useMemo(() => {

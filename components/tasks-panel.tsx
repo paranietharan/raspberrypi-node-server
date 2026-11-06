@@ -18,7 +18,7 @@ export function TasksPanel() {
 
   const fetchTasks = useCallback(async () => {
     try {
-      // Allow browser cache + server cache to reduce server load
+      // The server briefly caches samples; browsers must not retain system details
       const res = await fetch("/api/tasks");
       if (!res.ok) {
         throw new Error("Unable to fetch tasks");
@@ -34,12 +34,12 @@ export function TasksPanel() {
   }, []);
 
   useEffect(() => {
-    void fetchTasks();
+    const initial = requestAnimationFrame(() => { void fetchTasks(); });
     const timer = setInterval(() => {
       void fetchTasks();
     }, 5000); // Refresh every 5 seconds (matches server cache)
 
-    return () => clearInterval(timer);
+    return () => { cancelAnimationFrame(initial); clearInterval(timer); };
   }, [fetchTasks]);
 
   if (error) {

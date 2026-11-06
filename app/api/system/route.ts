@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSystemDetails } from "@/src/lib/system";
 
-let cachedMetrics: any = null;
+let cachedMetrics: Awaited<ReturnType<typeof getSystemDetails>> | null = null;
 let cacheTime = 0;
 const CACHE_DURATION = 1000; // 1 second cache
 
@@ -14,7 +14,7 @@ export async function GET() {
       return NextResponse.json(cachedMetrics, {
         status: 200,
         headers: {
-          "Cache-Control": "public, max-age=1, stale-while-revalidate=2",
+          "Cache-Control": "private, no-store",
           "X-Cache": "HIT",
         },
       });
@@ -27,7 +27,7 @@ export async function GET() {
     return NextResponse.json(details, {
       status: 200,
       headers: {
-        "Cache-Control": "public, max-age=1, stale-while-revalidate=2",
+        "Cache-Control": "private, no-store",
         "X-Cache": "MISS",
       },
     });
