@@ -1,16 +1,17 @@
 import os from "os";
+import { cpuUsageBetween } from "./cpu";
 import { exec } from "child_process";
 import { promisify } from "util";
 
 const execAsync = promisify(exec);
 
+let previousCpuTimes = os.cpus().map(cpu => cpu.times);
+
 function getCpuUsage() {
-  const cpus = os.cpus();
-  return cpus.map((cpu) => {
-    const total = Object.values(cpu.times).reduce((acc, tv) => acc + tv, 0);
-    const usage = 100 - (100 * cpu.times.idle) / total;
-    return usage.toFixed(1);
-  });
+  const current = os.cpus().map(cpu => cpu.times);
+  const usage = cpuUsageBetween(previousCpuTimes, current);
+  previousCpuTimes = current;
+  return usage;
 }
 
 async function getCpuTemp() {

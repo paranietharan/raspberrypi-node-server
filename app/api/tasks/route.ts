@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getRunningTasks } from "@/src/lib/system";
 
-let cachedTasks: any = null;
+let cachedTasks: Awaited<ReturnType<typeof getRunningTasks>> | null = null;
 let cacheTime = 0;
 const CACHE_DURATION = 2000; // 2 second cache (tasks refresh slower)
 
@@ -14,7 +14,7 @@ export async function GET() {
       return NextResponse.json(cachedTasks, {
         status: 200,
         headers: {
-          "Cache-Control": "public, max-age=2, stale-while-revalidate=3",
+          "Cache-Control": "private, no-store",
           "X-Cache": "HIT",
         },
       });
@@ -27,7 +27,7 @@ export async function GET() {
     return NextResponse.json(tasks, {
       status: 200,
       headers: {
-        "Cache-Control": "public, max-age=2, stale-while-revalidate=3",
+        "Cache-Control": "private, no-store",
         "X-Cache": "MISS",
       },
     });
